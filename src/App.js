@@ -16,13 +16,9 @@ let nodeId = 0;
 const getNextNodeId = () => `dndnode_${nodeId++}`;
 
 const AppContainer = () => {
-  // El estado de los nodos y conexiones ahora vive aquí
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  
-  // NUEVO: Estado para saber qué tipo de conexión está seleccionada
   const [selectedEdgeType, setSelectedEdgeType] = useState('default');
-
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition, getNodes } = useReactFlow();
 
@@ -31,13 +27,13 @@ const AppContainer = () => {
     (params) => {
       const newEdge = {
         ...params,
-        type: selectedEdgeType, // Usa el tipo de conexión del estado
+        type: selectedEdgeType,
         label: `Edge: ${selectedEdgeType}`,
         animated: selectedEdgeType === 'bezier',
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges, selectedEdgeType] // Depende del tipo de conexión seleccionado
+    [setEdges, selectedEdgeType]
   );
 
   // La lógica para conectar múltiples nodos también usa el tipo de conexión
@@ -47,15 +43,13 @@ const AppContainer = () => {
       (node) => node.selected && node.id !== targetNode.id
     );
 
-    if (sourceNodes.length === 0) {
-      return;
-    }
+    if (sourceNodes.length === 0) return;
 
     const newEdges = sourceNodes.map((sourceNode) => ({
       id: `edge-${sourceNode.id}-${targetNode.id}`,
       source: sourceNode.id,
       target: targetNode.id,
-      type: selectedEdgeType, // Usa el tipo de conexión del estado
+      type: selectedEdgeType,
       label: `Edge: ${selectedEdgeType}`,
       animated: selectedEdgeType === 'bezier',
     }));
@@ -63,13 +57,26 @@ const AppContainer = () => {
     setEdges((currentEdges) => addEdge(newEdges, currentEdges));
   }, [getNodes, setEdges, selectedEdgeType]);
 
+  // NUEVO: Callback para actualizar los datos de un nodo específico.
+  // Esto es crucial para que el campo de texto en CustomNode pueda guardar su valor.
+  const onNodeDataChange = useCallback((nodeId, newData) => {
+    setNodes((currentNodes) =>
+      currentNodes.map((node) => {
+        if (node.id === nodeId) {
+          // Es importante crear un nuevo objeto para los datos para que React detecte el cambio
+          return { ...node, data: { ...node.data, ...newData } };
+        }
+        return node;
+      })
+    );
+  }, [setNodes]);
 
-  // La lógica para eliminar un nodo (necesaria para el CustomNode)
+  // La lógica para eliminar un nodo
   const onDeleteNode = useCallback((nodeIdToDelete) => {
     setNodes((currentNodes) => currentNodes.filter((node) => node.id !== nodeIdToDelete));
   }, [setNodes]);
 
-  // La lógica para soltar un nuevo nodo en el lienzo
+  // MODIFICADO: La lógica para soltar un nuevo nodo en el lienzo
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -83,17 +90,20 @@ const AppContainer = () => {
       
       const newNode = {
         id: getNextNodeId(),
-        type: 'custom', // Usamos tu CustomNode
+        type: 'custom', // Siempre usamos nuestro CustomNode
         position,
         data: { 
+          nodeType: type, // NUEVO: Guardamos el tipo original ('input', 'default', etc.)
           label: `Nodo ${type}`, 
-          onDelete: onDeleteNode, // Pasamos la función de borrado
+          value: '', // Valor inicial para el campo de texto (si aplica)
+          onDelete: onDeleteNode,
+          onChange: onNodeDataChange, // NUEVO: Pasamos la función para actualizar datos
         },
       };
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition, setNodes, onDeleteNode]
+    [screenToFlowPosition, setNodes, onDeleteNode, onNodeDataChange] // Añadimos la nueva dependencia
   );
 
   return (
