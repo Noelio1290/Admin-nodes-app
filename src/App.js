@@ -11,7 +11,6 @@ import { Box } from '@mui/material';
 import Sidebar from './Components/Sidebar/Sidebar';
 import FlowCanvas from './Components/FlowCanvas/FlowCanvas';
 
-// Un ID único para los nodos que se arrastran y sueltan
 let nodeId = 0;
 const getNextNodeId = () => `dndnode_${nodeId++}`;
 
@@ -19,24 +18,24 @@ const AppContainer = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedEdgeType, setSelectedEdgeType] = useState('default');
+  const [selectedEdgeColor, setSelectedEdgeColor] = useState('#222222'); // Color inicial
+
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition, getNodes } = useReactFlow();
 
-  // La lógica para conectar nodos ahora usa el tipo de conexión seleccionado
   const onConnect = useCallback(
     (params) => {
       const newEdge = {
         ...params,
         type: selectedEdgeType,
-        label: `Edge: ${selectedEdgeType}`,
         animated: selectedEdgeType === 'bezier',
+        style: { stroke: selectedEdgeColor, strokeWidth: 2 }, // Aplica el color
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges, selectedEdgeType]
+    [setEdges, selectedEdgeType, selectedEdgeColor]
   );
 
-  // La lógica para conectar múltiples nodos también usa el tipo de conexión
   const onNodeClick = useCallback((event, targetNode) => {
     const allNodes = getNodes();
     const sourceNodes = allNodes.filter(
@@ -50,20 +49,17 @@ const AppContainer = () => {
       source: sourceNode.id,
       target: targetNode.id,
       type: selectedEdgeType,
-      label: `Edge: ${selectedEdgeType}`,
       animated: selectedEdgeType === 'bezier',
+      style: { stroke: selectedEdgeColor, strokeWidth: 2 }, // Aplica el color
     }));
 
     setEdges((currentEdges) => addEdge(newEdges, currentEdges));
-  }, [getNodes, setEdges, selectedEdgeType]);
+  }, [getNodes, setEdges, selectedEdgeType, selectedEdgeColor]);
 
-  // NUEVO: Callback para actualizar los datos de un nodo específico.
-  // Esto es crucial para que el campo de texto en CustomNode pueda guardar su valor.
   const onNodeDataChange = useCallback((nodeId, newData) => {
     setNodes((currentNodes) =>
       currentNodes.map((node) => {
         if (node.id === nodeId) {
-          // Es importante crear un nuevo objeto para los datos para que React detecte el cambio
           return { ...node, data: { ...node.data, ...newData } };
         }
         return node;
@@ -71,12 +67,10 @@ const AppContainer = () => {
     );
   }, [setNodes]);
 
-  // La lógica para eliminar un nodo
   const onDeleteNode = useCallback((nodeIdToDelete) => {
     setNodes((currentNodes) => currentNodes.filter((node) => node.id !== nodeIdToDelete));
   }, [setNodes]);
 
-  // MODIFICADO: La lógica para soltar un nuevo nodo en el lienzo
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -90,20 +84,20 @@ const AppContainer = () => {
       
       const newNode = {
         id: getNextNodeId(),
-        type: 'custom', // Siempre usamos nuestro CustomNode
+        type: 'custom',
         position,
         data: { 
-          nodeType: type, // NUEVO: Guardamos el tipo original ('input', 'default', etc.)
+          nodeType: type,
           label: `Nodo ${type}`, 
-          value: '', // Valor inicial para el campo de texto (si aplica)
+          value: '',
           onDelete: onDeleteNode,
-          onChange: onNodeDataChange, // NUEVO: Pasamos la función para actualizar datos
+          onChange: onNodeDataChange,
         },
       };
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition, setNodes, onDeleteNode, onNodeDataChange] // Añadimos la nueva dependencia
+    [screenToFlowPosition, setNodes, onDeleteNode, onNodeDataChange]
   );
 
   return (
@@ -111,6 +105,8 @@ const AppContainer = () => {
       <Sidebar 
         selectedEdgeType={selectedEdgeType}
         onEdgeTypeChange={setSelectedEdgeType}
+        selectedEdgeColor={selectedEdgeColor}
+        onEdgeColorChange={setSelectedEdgeColor}
       />
       <FlowCanvas
         reactFlowWrapper={reactFlowWrapper}
@@ -126,7 +122,6 @@ const AppContainer = () => {
   );
 };
 
-// Envolvemos todo en el Provider para que useReactFlow funcione
 const App = () => (
   <ReactFlowProvider>
     <AppContainer />

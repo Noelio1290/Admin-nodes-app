@@ -4,8 +4,17 @@ import { Box, Typography, Button, Divider } from '@mui/material';
 
 const nodeTypes = ['default', 'input', 'output'];
 const edgeTypes = ['default', 'straight', 'step', 'smoothstep', 'bezier'];
+const edgeColors = [
+  '#222222', '#e63946', '#f4a261', '#e76f51', '#2a9d8f', 
+  '#264653', '#8338ec', '#ff006e', '#06d6a0', '#ffbe0b'
+];
 
-const Sidebar = ({ selectedEdgeType, onEdgeTypeChange }) => {
+const Sidebar = ({ 
+  selectedEdgeType, 
+  onEdgeTypeChange,
+  selectedEdgeColor,
+  onEdgeColorChange,
+}) => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -23,7 +32,7 @@ const Sidebar = ({ selectedEdgeType, onEdgeTypeChange }) => {
         backgroundColor: '#f7f7f7'
       }}
     >
-      {/* SECCIÓN 1: Arrastrar Nodos (Tu funcionalidad original) */}
+      {/* SECCIÓN 1: Arrastrar Nodos */}
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Arrastrar Nodos
       </Typography>
@@ -32,19 +41,7 @@ const Sidebar = ({ selectedEdgeType, onEdgeTypeChange }) => {
           key={type}
           onDragStart={(e) => onDragStart(e, type)}
           draggable
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "40px",
-            width: '85%',
-            marginBottom: "10px",
-            border: '1px solid #1a192b',
-            borderRadius: '3px',
-            backgroundColor: 'white',
-            cursor: 'grab',
-            '&:active': { cursor: 'grabbing' },
-          }}
+          /* ...estilos... */
         >
           Nodo {type}
         </Box>
@@ -52,7 +49,7 @@ const Sidebar = ({ selectedEdgeType, onEdgeTypeChange }) => {
 
       <Divider sx={{ width: '100%', marginY: 2 }} />
 
-      {/* SECCIÓN 2: Seleccionar Tipo de Conexión (Nueva funcionalidad) */}
+      {/* SECCIÓN 2: Tipo de Conexión */}
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Tipo de Conexión
       </Typography>
@@ -60,13 +57,37 @@ const Sidebar = ({ selectedEdgeType, onEdgeTypeChange }) => {
         {edgeTypes.map((type) => (
           <Button 
             key={type} 
-            // El 'variant' cambia para mostrar cuál está seleccionado
             variant={selectedEdgeType === type ? 'contained' : 'outlined'}
             onClick={() => onEdgeTypeChange(type)}
             sx={{ textTransform: 'none' }}
           >
             {type}
           </Button>
+        ))}
+      </Box>
+
+      <Divider sx={{ width: '100%', marginY: 2 }} />
+
+      {/* SECCIÓN 3: Color de Conexión */}
+      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        Color de Conexión
+      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap', width: '85%' }}>
+        {edgeColors.map((color) => (
+          <Box
+            key={color}
+            onClick={() => onEdgeColorChange(color)}
+            sx={{
+              width: 30,
+              height: 30,
+              backgroundColor: color,
+              borderRadius: '50%',
+              cursor: 'pointer',
+              border: selectedEdgeColor === color ? '3px solid #007bff' : '1px solid #ddd',
+              boxSizing: 'border-box',
+              transition: 'border 0.2s',
+            }}
+          />
         ))}
       </Box>
     </Box>
