@@ -24,8 +24,9 @@ const Sidebar = ({
     <Box 
       sx={{ 
         display: "flex",
-        borderRight: "1px solid #ddd",
+        borderRight: "1px solid ",
         flexFlow: "column",
+        justifyContent: "center",
         alignItems: "center",
         padding: "16px", 
         width: "250px",
@@ -37,14 +38,20 @@ const Sidebar = ({
         Arrastrar Nodos
       </Typography>
       {nodeTypes.map((type) => (
-        <Box
+        <Button
           key={type}
+          sx={{
+            width: '85%',
+            textTransform: 'none',
+            marginBottom: '10px',
+          }}
+          variant='contained'
           onDragStart={(e) => onDragStart(e, type)}
           draggable
           /* ...estilos... */
         >
           Nodo {type}
-        </Box>
+        </Button>
       ))}
 
       <Divider sx={{ width: '100%', marginY: 2 }} />
