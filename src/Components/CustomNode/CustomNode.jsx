@@ -1,15 +1,18 @@
 // Components/CustomNode/CustomNode.js
 import { Handle, Position } from '@xyflow/react';
-import { Box, IconButton, TextField, Typography } from '@mui/material';
+import { Box, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 
-// Este es el componente que renderizará cada nodo en el canvas.
+// Este es el componente que renderizará cada nodo en el canvas...
 const CustomNode = ({ id, data }) => {
-  // Función para manejar los cambios en el campo de texto
+  // Permite editar el label del nodo
+  const handleLabelChange = (event) => {
+    data.onChange(id, { label: event.target.value });
+  };
+
+  // Permite editar el valor (solo para nodos tipo 'input')
   const handleValueChange = (event) => {
-    // Llama a la función 'onChange' que pasamos desde App.js
-    // Le enviamos el ID del nodo y el nuevo valor para actualizar el estado.
     data.onChange(id, { value: event.target.value });
   };
 
@@ -48,21 +51,29 @@ const CustomNode = ({ id, data }) => {
       {/* Puntos de conexión (sin cambios) */}
       <Handle type="target" position={Position.Top} id="a" />
       
-      {/* Etiqueta del nodo */}
-      <Typography variant="body2" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-        {data.label}
-      </Typography>
+      {/* Campo editable para el label */}
+      <TextField
+        variant="standard"
+        value={data.label}
+        onChange={handleLabelChange}
+        fullWidth
+        inputProps={{
+          style: { textAlign: 'center', fontWeight: 'bold', fontSize: 15 },
+        }}
+        sx={{ marginBottom: 1 }}
+        onClick={e => e.stopPropagation()}
+      />
 
-      {/* RENDERIZADO CONDICIONAL: Mostramos el campo de texto solo para nodos de tipo 'input' */}
+      {/* Campo de valor solo para nodos tipo 'input' */}
       {data.nodeType === 'input' && (
         <TextField
           label="Valor"
           variant="outlined"
           size="small"
           fullWidth
-          value={data.value} // El valor está controlado por el estado en App.js
-          onChange={handleValueChange} // Llama a la función para actualizar el estado
-          onClick={(e) => e.stopPropagation()} // Evita que se arrastre el nodo al hacer clic en el input
+          value={data.value}
+          onChange={handleValueChange}
+          onClick={e => e.stopPropagation()}
           sx={{
             marginTop: '4px',
             '& .MuiInputBase-input': {

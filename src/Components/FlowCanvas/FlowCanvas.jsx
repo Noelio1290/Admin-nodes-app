@@ -4,6 +4,7 @@ import {
   ReactFlow,
   Controls,
   Background,
+  MiniMap,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import CustomNode from '../CustomNode/CustomNode'; // Asumo que tienes este archivo
@@ -51,6 +52,14 @@ const FlowCanvas = ({
         nodeTypes={nodeTypes}
         fitView
       >
+        <MiniMap 
+          nodeColor="#1976d2" 
+          nodeStrokeWidth={2}
+          maskColor="rgba(0,0,0,0.1)"
+          pannable="true"
+          zoomable="true"
+          style={{ width: 120, height: 80 }}
+        />
         <Background variant='lines' color='#ccc' gap={12} size={1} />
         <Controls />
       </ReactFlow>
