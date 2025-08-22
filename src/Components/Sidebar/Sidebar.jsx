@@ -1,6 +1,6 @@
 // Components/Sidebar/Sidebar.js
 import React from 'react';
-import { Box, Typography, Button, Divider } from '@mui/material';
+import { Box, Typography, Button, Divider, TextField } from '@mui/material';
 
 const nodeTypes = ['default', 'input', 'output'];
 const edgeTypes = ['default', 'straight', 'step', 'smoothstep', 'bezier'];
@@ -14,7 +14,32 @@ const Sidebar = ({
   onEdgeTypeChange,
   selectedEdgeColor,
   onEdgeColorChange,
+  onExport,
+  onImport,
+  setSearchQuery,
 }) => {
+  // Maneja importación de archivo
+  const handleImport = (e) => {
+    const file = e.target.files[0];
+    if (file) onImport(file);
+  };
+      {/* SECCIÓN: Exportar/Importar */}
+      <Box sx={{ width: '85%', display: 'flex', gap: 1, mb: 2 }}>
+        <Button variant="outlined" fullWidth onClick={onExport}>Exportar</Button>
+        <Button variant="outlined" component="label" fullWidth>
+          Importar
+          <input type="file" accept="application/json" hidden onChange={handleImport} />
+        </Button>
+      </Box>
+
+      {/* SECCIÓN: Búsqueda */}
+      <TextField
+        size="small"
+        placeholder="Buscar nodo..."
+        fullWidth
+        sx={{ mb: 2, width: '85%' }}
+        onChange={e => setSearchQuery(e.target.value)}
+      />
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -33,6 +58,22 @@ const Sidebar = ({
         backgroundColor: '#f7f7f7'
       }}
     >
+      {/* SECCIÓN: Exportar/Importar */}
+      <Box sx={{ width: '85%', display: 'flex', gap: 1, mb: 2 }}>
+        <Button variant="outlined" fullWidth onClick={onExport}>Exportar</Button>
+        <Button variant="outlined" component="label" fullWidth>
+          Importar
+          <input type="file" accept="application/json" hidden onChange={handleImport} />
+        </Button>
+      </Box>
+      {/* SECCIÓN: Búsqueda */}
+      <TextField
+        size="small"
+        placeholder="Buscar nodo..."
+        fullWidth
+        sx={{ mb: 2, width: '85%' }}
+        onChange={e => setSearchQuery(e.target.value)}
+      />
       {/* SECCIÓN 1: Arrastrar Nodos */}
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Arrastrar Nodos
@@ -48,14 +89,11 @@ const Sidebar = ({
           variant='contained'
           onDragStart={(e) => onDragStart(e, type)}
           draggable
-          /* ...estilos... */
         >
           Nodo {type}
         </Button>
       ))}
-
       <Divider sx={{ width: '100%', marginY: 2 }} />
-
       {/* SECCIÓN 2: Tipo de Conexión */}
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Tipo de Conexión
@@ -72,9 +110,7 @@ const Sidebar = ({
           </Button>
         ))}
       </Box>
-
       <Divider sx={{ width: '100%', marginY: 2 }} />
-
       {/* SECCIÓN 3: Color de Conexión */}
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Color de Conexión

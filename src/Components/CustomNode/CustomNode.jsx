@@ -1,6 +1,7 @@
 // Components/CustomNode/CustomNode.js
 import { Handle, Position } from '@xyflow/react';
-import { Box, IconButton, TextField, Popover, Tooltip } from '@mui/material';
+import { Box, IconButton, TextField, Popover, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import NoteIcon from '@mui/icons-material/Note';
 import CloseIcon from '@mui/icons-material/Close';
 import PaletteIcon from '@mui/icons-material/Palette';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
@@ -65,19 +66,70 @@ const CustomNode = ({ id, data }) => {
     }
   };
 
+  // Estado para mostrar/ocultar el dialogo de nota
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteDraft, setNoteDraft] = useState(data.note || '');
+
+  const handleNoteOpen = () => {
+    setNoteDraft(data.note || '');
+    setNoteOpen(true);
+  };
+  const handleNoteClose = () => setNoteOpen(false);
+  const handleNoteSave = () => {
+    data.onChange(id, { note: noteDraft });
+    setNoteOpen(false);
+  };
+
   return (
     <Box
       sx={{
-        border: '1px solid #1a192b',
+        border: data.highlight ? '2.5px solid #1976d2' : '1px solid #1a192b',
         borderRadius: '3px',
         backgroundColor: data.color || 'white',
         width: 170,
         textAlign: 'center',
         position: 'relative',
         padding: '10px',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+        boxShadow: data.highlight ? '0 0 10px #1976d2' : '0 2px 5px rgba(0,0,0,0.1)',
+        transition: 'box-shadow 0.2s, border 0.2s',
       }}
     >
+      {/* Botón de nota/descripcion (esquina inferior izquierda) */}
+      <IconButton
+        aria-label="note"
+        size="small"
+        sx={{
+          position: 'absolute',
+          bottom: -12,
+          left: -12,
+          backgroundColor: data.note ? '#fffde7' : 'white',
+          border: '1px solid #1a192b',
+          '&:hover': { backgroundColor: '#fffde7' },
+          zIndex: 2,
+        }}
+        onClick={handleNoteOpen}
+      >
+        <NoteIcon fontSize="inherit" color={data.note ? 'warning' : 'action'} />
+      </IconButton>
+
+      {/* Dialogo para editar nota */}
+      <Dialog open={noteOpen} onClose={handleNoteClose} maxWidth="xs" fullWidth>
+        <DialogTitle>Nota o descripción</DialogTitle>
+        <DialogContent>
+          <TextField
+            multiline
+            minRows={4}
+            fullWidth
+            value={noteDraft}
+            onChange={e => setNoteDraft(e.target.value)}
+            placeholder="Agrega una nota o descripción para este nodo..."
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleNoteClose}>Cancelar</Button>
+          <Button onClick={handleNoteSave} variant="contained">Guardar</Button>
+        </DialogActions>
+      </Dialog>
       {/* Botón de paleta de colores (esquina superior izquierda) */}
       <IconButton
         aria-label="color"
@@ -118,14 +170,14 @@ const CustomNode = ({ id, data }) => {
         ))}
       </Popover>
 
-      {/* Botón de icono/imagen (esquina superior derecha, junto al de cerrar) */}
+      {/* Botón de icono/imagen (esquina superior derecha) */}
       <IconButton
         aria-label="icon"
         size="small"
         sx={{
           position: 'absolute',
           top: -12,
-          right: 24,
+          right: -12,
           backgroundColor: 'white',
           border: '1px solid #1a192b',
           '&:hover': { backgroundColor: '#eee' },
@@ -166,13 +218,13 @@ const CustomNode = ({ id, data }) => {
         </Tooltip>
       </Popover>
 
-      {/* Botón de cerrar (esquina superior derecha) */}
+      {/* Botón de cerrar (esquina inferior derecha) */}
       <IconButton
         aria-label="delete"
         size="small"
         sx={{
           position: 'absolute',
-          top: -12,
+          bottom: -12,
           right: -12,
           backgroundColor: 'white',
           border: '1px solid #1a192b',

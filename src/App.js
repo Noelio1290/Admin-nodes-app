@@ -18,7 +18,8 @@ const AppContainer = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedEdgeType, setSelectedEdgeType] = useState('default');
-  const [selectedEdgeColor, setSelectedEdgeColor] = useState('#222222'); // Color inicial
+  const [selectedEdgeColor, setSelectedEdgeColor] = useState('#222222');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition, getNodes } = useReactFlow();
@@ -67,6 +68,33 @@ const AppContainer = () => {
     );
   }, [setNodes]);
 
+  // Exportar
+  const exportFlow = () => {
+    const dataStr = JSON.stringify({ nodes, edges }, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mapa-mental.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Importar
+  const importFlow = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const { nodes: n, edges: egs } = JSON.parse(e.target.result);
+        setNodes(n);
+        setEdges(egs);
+      } catch (err) {
+        alert('Archivo inválido');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const onDeleteNode = useCallback((nodeIdToDelete) => {
     setNodes((currentNodes) => currentNodes.filter((node) => node.id !== nodeIdToDelete));
   }, [setNodes]);
@@ -100,6 +128,18 @@ const AppContainer = () => {
     [screenToFlowPosition, setNodes, onDeleteNode, onNodeDataChange]
   );
 
+  // Filtrar nodos por búsqueda
+  const filteredNodes = searchQuery
+    ? nodes.map(node => ({
+        ...node,
+        data: {
+          ...node.data,
+          highlight: (node.data.label && node.data.label.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (node.data.note && node.data.note.toLowerCase().includes(searchQuery.toLowerCase())),
+        },
+      }))
+    : nodes;
+
   return (
     <Box sx={{ display: 'flex', flexFlow: 'row', height: '100vh', fontFamily: 'sans-serif' }}>
       <Sidebar 
@@ -107,10 +147,13 @@ const AppContainer = () => {
         onEdgeTypeChange={setSelectedEdgeType}
         selectedEdgeColor={selectedEdgeColor}
         onEdgeColorChange={setSelectedEdgeColor}
+        onExport={exportFlow}
+        onImport={importFlow}
+        setSearchQuery={setSearchQuery}
       />
       <FlowCanvas
         reactFlowWrapper={reactFlowWrapper}
-        nodes={nodes}
+        nodes={filteredNodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
