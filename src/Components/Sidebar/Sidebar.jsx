@@ -23,23 +23,7 @@ const Sidebar = ({
     const file = e.target.files[0];
     if (file) onImport(file);
   };
-      {/* SECCIÓN: Exportar/Importar */}
-      <Box sx={{ width: '85%', display: 'flex', gap: 1, mb: 2 }}>
-        <Button variant="outlined" fullWidth onClick={onExport}>Exportar</Button>
-        <Button variant="outlined" component="label" fullWidth>
-          Importar
-          <input type="file" accept="application/json" hidden onChange={handleImport} />
-        </Button>
-      </Box>
-
-      {/* SECCIÓN: Búsqueda */}
-      <TextField
-        size="small"
-        placeholder="Buscar nodo..."
-        fullWidth
-        sx={{ mb: 2, width: '85%' }}
-        onChange={e => setSearchQuery(e.target.value)}
-      />
+  // Maneja inicio de arrastre de nodo 
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';

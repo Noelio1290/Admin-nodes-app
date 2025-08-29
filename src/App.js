@@ -81,19 +81,40 @@ const AppContainer = () => {
   };
 
   // Importar
-  const importFlow = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const { nodes: n, edges: egs } = JSON.parse(e.target.result);
-        setNodes(n);
-        setEdges(egs);
-      } catch (err) {
-        alert('Archivo inválido');
-      }
-    };
-    reader.readAsText(file);
+const importFlow = (file) => {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      let { nodes: n, edges: egs } = JSON.parse(e.target.result);
+
+      // Asegura que todos los nodos tengan las funciones y campos necesarios
+      n = n.map(node => ({
+        ...node,
+        data: {
+          ...node.data,
+          onDelete: onDeleteNode,
+          onChange: onNodeDataChange,
+          color: node.data.color || '',
+          icon: node.data.icon || '',
+          image: node.data.image || '',
+          note: node.data.note || '',
+        }
+      }));
+      // Actualiza los estados
+      setNodes(n);
+      setEdges(egs);
+      // Actualiza nodeId para evitar duplicados
+      const maxId = n
+        .map(node => parseInt(node.id.replace('dndnode_', ''), 10))
+        .filter(num => !isNaN(num))
+        .reduce((max, curr) => Math.max(max, curr), -1);
+      nodeId = maxId + 1;
+    } catch (err) {
+      alert('Archivo inválido');
+    }
   };
+  reader.readAsText(file);
+};
 
   const onDeleteNode = useCallback((nodeIdToDelete) => {
     setNodes((currentNodes) => currentNodes.filter((node) => node.id !== nodeIdToDelete));
