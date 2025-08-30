@@ -193,7 +193,19 @@ const importFlow = (file) => {
     setEdgePopover({ open: false, anchorEl: null, edge: null });
   };
   const handleEdgeColor = (color) => {
-    setEdges((eds) => eds.map(e => e.id === edgePopover.edge.id ? { ...e, style: { ...e.style, stroke: color } } : e));
+    setEdges((eds) => eds.map(e => {
+      if (e.id !== edgePopover.edge.id) return e;
+      // Si es tipo flecha (animated-arrow), actualiza también markerEnd.color
+      if (e.type === 'animated-arrow') {
+        return {
+          ...e,
+          style: { ...e.style, stroke: color },
+          markerEnd: { ...(e.markerEnd || {}), color },
+        };
+      }
+      // Otros tipos
+      return { ...e, style: { ...e.style, stroke: color } };
+    }));
   };
   const handleEdgeType = (type) => {
     setEdges((eds) => eds.map(e => {
