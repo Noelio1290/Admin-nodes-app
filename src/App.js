@@ -1,5 +1,6 @@
 // App.js
 import React, { useState, useCallback, useRef } from 'react';
+import EdgePopover from './Components/EdgePopover';
 import {
   ReactFlowProvider,
   useNodesState,
@@ -21,6 +22,7 @@ const AppContainer = () => {
   const [selectedEdgeColor, setSelectedEdgeColor] = useState('#222222');
   const [edgeWidth, setEdgeWidth] = useState(2);
   const [searchQuery, setSearchQuery] = useState('');
+  const [edgePopover, setEdgePopover] = useState({ open: false, anchorEl: null, edge: null });
 
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition, getNodes } = useReactFlow();
@@ -179,6 +181,27 @@ const importFlow = (file) => {
       }))
     : nodes;
 
+  // Handler para click en edge
+  const onEdgeClick = useCallback((event, edge) => {
+    event.stopPropagation();
+    setEdgePopover({ open: true, anchorEl: event.currentTarget, edge });
+  }, []);
+
+  // Acciones del popover
+  const handleDeleteEdge = () => {
+    setEdges((eds) => eds.filter(e => e.id !== edgePopover.edge.id));
+    setEdgePopover({ open: false, anchorEl: null, edge: null });
+  };
+  const handleEdgeColor = (color) => {
+    setEdges((eds) => eds.map(e => e.id === edgePopover.edge.id ? { ...e, style: { ...e.style, stroke: color } } : e));
+  };
+  const handleEdgeType = (type) => {
+    setEdges((eds) => eds.map(e => e.id === edgePopover.edge.id ? { ...e, type } : e));
+  };
+  const handleEdgeWidth = (width) => {
+    setEdges((eds) => eds.map(e => e.id === edgePopover.edge.id ? { ...e, style: { ...e.style, strokeWidth: width } } : e));
+  };
+
   return (
     <Box sx={{ display: 'flex', flexFlow: 'row', height: '100vh', fontFamily: 'sans-serif' }}>
       <Sidebar 
@@ -201,6 +224,17 @@ const importFlow = (file) => {
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         onDrop={onDrop}
+        onEdgeClick={onEdgeClick}
+      />
+      <EdgePopover
+        open={edgePopover.open}
+        anchorEl={edgePopover.anchorEl}
+        edge={edgePopover.edge}
+        onClose={() => setEdgePopover({ open: false, anchorEl: null, edge: null })}
+        onDelete={handleDeleteEdge}
+        onColor={handleEdgeColor}
+        onType={handleEdgeType}
+        onWidth={handleEdgeWidth}
       />
     </Box>
   );

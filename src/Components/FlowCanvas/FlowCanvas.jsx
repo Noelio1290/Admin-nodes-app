@@ -24,6 +24,7 @@ const FlowCanvas = ({
   onConnect,
   onNodeClick,
   onDrop,
+  onEdgeClick,
 }) => {
 
   // La lógica de onDragOver puede quedarse aquí, es simple
@@ -57,6 +58,7 @@ const FlowCanvas = ({
         onDrop={onDrop}
         onDragOver={onDragOver}
         onNodeClick={onNodeClick}
+        onEdgeClick={onEdgeClick}
         nodeTypes={nodeTypes}
         fitView
       >
