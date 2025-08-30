@@ -196,7 +196,34 @@ const importFlow = (file) => {
     setEdges((eds) => eds.map(e => e.id === edgePopover.edge.id ? { ...e, style: { ...e.style, stroke: color } } : e));
   };
   const handleEdgeType = (type) => {
-    setEdges((eds) => eds.map(e => e.id === edgePopover.edge.id ? { ...e, type } : e));
+    setEdges((eds) => eds.map(e => {
+      if (e.id !== edgePopover.edge.id) return e;
+      // Flecha: type 'animated-arrow'
+      if (type === 'arrow') {
+        return {
+          ...e,
+          type: 'animated-arrow',
+          animated: true,
+          markerEnd: { type: 'arrowclosed', color: e.style?.stroke || '#222222' },
+        };
+      }
+      // Animado: type 'bezier' + animated
+      if (type === 'bezier') {
+        return {
+          ...e,
+          type: 'bezier',
+          animated: true,
+          markerEnd: undefined,
+        };
+      }
+      // Otros tipos
+      return {
+        ...e,
+        type,
+        animated: false,
+        markerEnd: undefined,
+      };
+    }));
   };
   const handleEdgeWidth = (width) => {
     setEdges((eds) => eds.map(e => e.id === edgePopover.edge.id ? { ...e, style: { ...e.style, strokeWidth: width } } : e));
