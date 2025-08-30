@@ -34,10 +34,18 @@ const FlowCanvas = ({
 
   return (
     <div ref={reactFlowWrapper} style={{ flexGrow: 1, height: '100%', position: 'relative' }}>
-      <Box sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, background: 'rgba(255, 255, 255, 0.8)', padding: '8px', borderRadius: '4px' }}>
-        <Typography variant="caption">
+      <Box sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10, background: 'rgba(255, 255, 255, 0.9)', padding: '10px 16px', borderRadius: '8px', boxShadow: 2, minWidth: 180 }}>
+        <Typography variant="caption" sx={{ display: 'block', mb: 1 }}>
           <b>Tip:</b> Selecciona un tipo de conexión, luego une dos nodos.
         </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+          <Box sx={{ width: 16, height: 16, borderRadius: '50%', background: '#6ec6ff', border: '2px solid #fff', mr: 1 }} />
+          <Typography variant="caption">Salida (source)</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ width: 16, height: 16, borderRadius: '50%', background: '#a5d6a7', border: '2px solid #fff', mr: 1 }} />
+          <Typography variant="caption">Entrada (target)</Typography>
+        </Box>
       </Box>
 
       <ReactFlow

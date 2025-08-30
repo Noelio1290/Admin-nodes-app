@@ -141,6 +141,8 @@ const importFlow = (file) => {
           value: '',
           onDelete: onDeleteNode,
           onChange: onNodeDataChange,
+          handleColor: '#1976d2', // color por defecto
+          handleSize: 14,         // tamaño por defecto
         },
       };
 

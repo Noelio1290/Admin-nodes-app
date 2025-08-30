@@ -1,4 +1,3 @@
-// Components/CustomNode/CustomNode.js
 import { Handle, Position } from '@xyflow/react';
 import { Box, IconButton, TextField, Popover, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import NoteIcon from '@mui/icons-material/Note';
@@ -8,7 +7,11 @@ import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import ImageIcon from '@mui/icons-material/Image';
 import React, { useState } from 'react';
 
-// Este es el componente que renderizará cada nodo en el canvas...
+const TOP_POSITIONS = [ { left: '15%' }, { left: '50%' }, { left: '85%' } ];
+const BOTTOM_POSITIONS = [ { left: '15%' }, { left: '50%' }, { left: '85%' } ];
+const LEFT_POSITIONS = [ { top: '30%' }, { top: '70%' } ];
+const RIGHT_POSITIONS = [ { top: '30%' }, { top: '70%' } ];
+
 const CustomNode = ({ id, data }) => {
   // Permite editar el label del nodo
   const handleLabelChange = (event) => {
@@ -79,6 +82,12 @@ const CustomNode = ({ id, data }) => {
     data.onChange(id, { note: noteDraft });
     setNoteOpen(false);
   };
+
+  // Colores amables para source y target
+  const sourceColor = '#6ec6ff'; // azul claro
+  const targetColor = '#a5d6a7'; // verde claro
+  const handleSize = 6; // Tamaño fijo, no editable
+  // (Eliminada declaración duplicada de handleSize)
 
   return (
     <Box
@@ -236,8 +245,6 @@ const CustomNode = ({ id, data }) => {
         <CloseIcon fontSize="inherit" />
       </IconButton>
 
-      <Handle type="target" position={Position.Top} id="a" />
-
       {/* Mostrar imagen o icono */}
       {data.image ? (
         <img
@@ -279,7 +286,143 @@ const CustomNode = ({ id, data }) => {
         />
       )}
 
-      <Handle type="source" position={Position.Bottom} id="b" />
+
+      {/* Handles arriba: 3 source y 3 target (juntos) */}
+      {TOP_POSITIONS.map((style, idx) => (
+        <React.Fragment key={`top-pair-${idx}`}>
+            <Handle
+              type="source"
+              position={Position.Top}
+              id={`top-source-${idx}`}
+              style={{
+                ...style,
+                background: sourceColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 11,
+                transform: 'translate(-90%, -50%)', // más a la izquierda
+              }}
+            />
+            <Handle
+              type="target"
+              position={Position.Top}
+              id={`top-target-${idx}`}
+              style={{
+                ...style,
+                background: targetColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 10,
+                transform: 'translate(-10%, -50%)', // más a la derecha
+              }}
+            />
+        </React.Fragment>
+      ))}
+      {/* Handles abajo: 3 source y 3 target (juntos) */}
+      {BOTTOM_POSITIONS.map((style, idx) => (
+        <React.Fragment key={`bottom-pair-${idx}`}>
+            <Handle
+              type="source"
+              position={Position.Bottom}
+              id={`bottom-source-${idx}`}
+              style={{
+                ...style,
+                background: sourceColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 11,
+                transform: 'translate(-90%, 50%)', // más a la izquierda
+              }}
+            />
+            <Handle
+              type="target"
+              position={Position.Bottom}
+              id={`bottom-target-${idx}`}
+              style={{
+                ...style,
+                background: targetColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 10,
+                transform: 'translate(-10%, 50%)', // más a la derecha
+              }}
+            />
+        </React.Fragment>
+      ))}
+      {/* Handles izquierda: 2 source y 2 target (juntos) */}
+      {LEFT_POSITIONS.map((style, idx) => (
+        <React.Fragment key={`left-pair-${idx}`}>
+            <Handle
+              type="source"
+              position={Position.Left}
+              id={`left-source-${idx}`}
+              style={{
+                ...style,
+                background: sourceColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 11,
+                left: 0,
+                transform: 'translate(-50%, -80%)', // más arriba
+              }}
+            />
+            <Handle
+              type="target"
+              position={Position.Left}
+              id={`left-target-${idx}`}
+              style={{
+                ...style,
+                background: targetColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 10,
+                left: 0,
+                transform: 'translate(-50%, 0%)', // más abajo
+              }}
+            />
+        </React.Fragment>
+      ))}
+      {/* Handles derecha: 2 source y 2 target (juntos) */}
+      {RIGHT_POSITIONS.map((style, idx) => (
+        <React.Fragment key={`right-pair-${idx}`}>
+            <Handle
+              type="source"
+              position={Position.Right}
+              id={`right-source-${idx}`}
+              style={{
+                ...style,
+                background: sourceColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 11,
+                right: 0,
+                transform: 'translate(50%, -80%)', // más arriba
+              }}
+            />
+            <Handle
+              type="target"
+              position={Position.Right}
+              id={`right-target-${idx}`}
+              style={{
+                ...style,
+                background: targetColor,
+                width: handleSize,
+                height: handleSize,
+                border: '2px solid #fff',
+                zIndex: 10,
+                right: 0,
+                transform: 'translate(50%, 0%)', // más abajo
+              }}
+            />
+        </React.Fragment>
+      ))}
     </Box>
   );
 };
