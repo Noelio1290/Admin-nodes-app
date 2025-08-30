@@ -23,9 +23,23 @@ const CustomNode = ({ id, data }) => {
     data.onChange(id, { value: event.target.value });
   };
 
+  // Paleta de colores vivos y agradables, incluye los de handles
   const COLOR_PALETTE = [
-    '#ffffff', '#ff7300ff', '#b92b07ff', '#1feb58ff', '#1a6a3bff',
-    '#8338ec', '#ff0000ff', '#0d06d6ff', '#ffbe0b', '#00ffffff'
+    '#6ec6ff', // azul claro (source)
+    '#a5d6a7', // verde claro (target)
+    '#ffb74d', // naranja suave
+    '#ffd54f', // amarillo suave
+    '#ff8a65', // coral
+    '#ba68c8', // violeta
+    '#f06292', // rosa
+    '#4dd0e1', // turquesa
+    '#81c784', // verde vivo
+    '#fff176', // amarillo vivo
+    '#90caf9', // azul pastel
+    '#ff5252', // rojo vivo
+    '#ffd180', // durazno
+    '#b2ff59', // verde lima
+    '#69f0ae', // verde menta
   ];
 
   // Estado para mostrar/ocultar paleta de colores
@@ -109,8 +123,13 @@ const CustomNode = ({ id, data }) => {
         size="small"
         sx={{
           position: 'absolute',
-          bottom: -12,
-          left: -12,
+          bottom: -8,
+          left: -8,
+          width: 20,
+          height: 20,
+          minWidth: 20,
+          minHeight: 20,
+          fontSize: 14,
           backgroundColor: data.note ? '#fffde7' : 'white',
           border: '1px solid #1a192b',
           '&:hover': { backgroundColor: '#fffde7' },
@@ -145,8 +164,13 @@ const CustomNode = ({ id, data }) => {
         size="small"
         sx={{
           position: 'absolute',
-          top: -12,
-          left: -12,
+          top: -8,
+          left: -8,
+          width: 20,
+          height: 20,
+          minWidth: 20,
+          minHeight: 20,
+          fontSize: 14,
           backgroundColor: 'white',
           border: '1px solid #1a192b',
           '&:hover': { backgroundColor: '#eee' },
@@ -185,8 +209,13 @@ const CustomNode = ({ id, data }) => {
         size="small"
         sx={{
           position: 'absolute',
-          top: -12,
-          right: -12,
+          top: -8,
+          right: -8,
+          width: 20,
+          height: 20,
+          minWidth: 20,
+          minHeight: 20,
+          fontSize: 14,
           backgroundColor: 'white',
           border: '1px solid #1a192b',
           '&:hover': { backgroundColor: '#eee' },
@@ -233,8 +262,13 @@ const CustomNode = ({ id, data }) => {
         size="small"
         sx={{
           position: 'absolute',
-          bottom: -12,
-          right: -12,
+          bottom: -8,
+          right: -8,
+          width: 20,
+          height: 20,
+          minWidth: 20,
+          minHeight: 20,
+          fontSize: 14,
           backgroundColor: 'white',
           border: '1px solid #1a192b',
           '&:hover': { backgroundColor: '#eee' },

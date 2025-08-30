@@ -4,9 +4,23 @@ import { Box, Typography, Button, Divider, TextField } from '@mui/material';
 
 const nodeTypes = ['default', 'input', 'output'];
 const edgeTypes = ['default', 'straight', 'step', 'smoothstep', 'bezier'];
+// Paleta de colores vivos y agradables, incluye los de handles
 const edgeColors = [
-  '#222222', '#e63946', '#f4a261', '#e76f51', '#2a9d8f', 
-  '#264653', '#8338ec', '#ff006e', '#06d6a0', '#ffbe0b'
+  '#6ec6ff', // azul claro (source)
+  '#a5d6a7', // verde claro (target)
+  '#ffb74d', // naranja suave
+  '#ffd54f', // amarillo suave
+  '#ff8a65', // coral
+  '#ba68c8', // violeta
+  '#f06292', // rosa
+  '#4dd0e1', // turquesa
+  '#81c784', // verde vivo
+  '#fff176', // amarillo vivo
+  '#90caf9', // azul pastel
+  '#ff5252', // rojo vivo
+  '#ffd180', // durazno
+  '#b2ff59', // verde lima
+  '#69f0ae', // verde menta
 ];
 
 const Sidebar = ({ 
