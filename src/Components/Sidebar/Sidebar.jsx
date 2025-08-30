@@ -1,9 +1,16 @@
 // Components/Sidebar/Sidebar.js
 import React from 'react';
-import { Box, Typography, Button, Divider, TextField } from '@mui/material';
+import { Box, Typography, Button, Divider, TextField, Slider } from '@mui/material';
 
 const nodeTypes = ['default', 'input', 'output'];
-const edgeTypes = ['default', 'straight', 'step', 'smoothstep', 'bezier'];
+const edgeTypes = [
+  { key: 'default', label: 'Default' },
+  { key: 'straight', label: 'Recta' },
+  { key: 'arrow', label: 'Flecha' },
+  { key: 'step', label: 'Step' },
+  { key: 'smoothstep', label: 'Smoothstep' },
+  { key: 'bezier', label: 'Animado' },
+];
 // Paleta de colores vivos y agradables, incluye los de handles
 const edgeColors = [
   '#6ec6ff', // azul claro (source)
@@ -31,6 +38,8 @@ const Sidebar = ({
   onExport,
   onImport,
   setSearchQuery,
+  edgeWidth,
+  setEdgeWidth,
 }) => {
   // Maneja importación de archivo
   const handleImport = (e) => {
@@ -96,17 +105,29 @@ const Sidebar = ({
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
         Tipo de Conexión
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '85%' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '85%' }}>
         {edgeTypes.map((type) => (
           <Button 
-            key={type} 
-            variant={selectedEdgeType === type ? 'contained' : 'outlined'}
-            onClick={() => onEdgeTypeChange(type)}
-            sx={{ textTransform: 'none' }}
+            key={type.key} 
+            variant={selectedEdgeType === type.key ? 'contained' : 'outlined'}
+            onClick={() => onEdgeTypeChange(type.key)}
+            sx={{ textTransform: 'none', fontSize: '0.85rem', py: 0.5, minHeight: 28 }}
           >
-            {type}
+            {type.label}
           </Button>
         ))}
+      </Box>
+      {/* Grosor de conexión debajo del selector de tipo */}
+      <Box sx={{ width: '85%', mt: 1, mb: 2 }}>
+        <Typography variant="subtitle2" sx={{ mb: 1 }}>Grosor de conexión</Typography>
+        <Slider
+          min={1}
+          max={10}
+          step={1}
+          value={edgeWidth}
+          onChange={(_, v) => setEdgeWidth(v)}
+          valueLabelDisplay="auto"
+        />
       </Box>
       <Divider sx={{ width: '100%', marginY: 2 }} />
       {/* SECCIÓN 3: Color de Conexión */}

@@ -19,6 +19,7 @@ const AppContainer = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedEdgeType, setSelectedEdgeType] = useState('default');
   const [selectedEdgeColor, setSelectedEdgeColor] = useState('#222222');
+  const [edgeWidth, setEdgeWidth] = useState(2);
   const [searchQuery, setSearchQuery] = useState('');
 
   const reactFlowWrapper = useRef(null);
@@ -26,15 +27,30 @@ const AppContainer = () => {
 
   const onConnect = useCallback(
     (params) => {
+      let type = selectedEdgeType;
+      let animated = false;
+      let markerEnd = undefined;
+      if (selectedEdgeType === 'arrow') {
+        type = 'straight';
+        animated = true;
+        markerEnd = { type: 'arrowclosed', color: selectedEdgeColor };
+      }
+      // Para bezier, animar y sin markerEnd
+      if (selectedEdgeType === 'bezier') {
+        type = 'bezier';
+        animated = true;
+        markerEnd = undefined;
+      }
       const newEdge = {
         ...params,
-        type: selectedEdgeType,
-        animated: selectedEdgeType === 'bezier',
-        style: { stroke: selectedEdgeColor, strokeWidth: 2 }, // Aplica el color
+        type,
+        animated,
+        style: { stroke: selectedEdgeColor, strokeWidth: edgeWidth },
+        markerEnd,
       };
       setEdges((eds) => addEdge(newEdge, eds));
     },
-    [setEdges, selectedEdgeType, selectedEdgeColor]
+    [setEdges, selectedEdgeType, selectedEdgeColor, edgeWidth]
   );
 
   const onNodeClick = useCallback((event, targetNode) => {
@@ -173,6 +189,8 @@ const importFlow = (file) => {
         onExport={exportFlow}
         onImport={importFlow}
         setSearchQuery={setSearchQuery}
+        edgeWidth={edgeWidth}
+        setEdgeWidth={setEdgeWidth}
       />
       <FlowCanvas
         reactFlowWrapper={reactFlowWrapper}
